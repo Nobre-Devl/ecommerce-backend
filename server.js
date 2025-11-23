@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const swaggerUi = require('swagger-ui-express'); 
+const swaggerUi = require('swagger-ui-express');
 
 const produtoRoutes = require('./routes/produtos');
 const authRoutes = require('./routes/auth'); 
@@ -29,7 +29,7 @@ const swaggerDocument = {
       description: 'Servidor Local'
     },
     {
-      url: 'https://ecommerce-backend-green-iota.vercel.app', 
+      url: 'https://ecommerce-backend-alpha.vercel.app', 
       description: 'Produção (Vercel)'
     }
   ]
@@ -48,7 +48,11 @@ mongoose
   .then(() => console.log('✅ MongoDB Conectado!'))
   .catch(err => console.error('❌ Erro no Mongo:', err));
 
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  customCssUrl: CSS_URL
+}));
 
 app.use('/produtos', produtoRoutes);      
 app.use('/api/loja', authRoutes);         
