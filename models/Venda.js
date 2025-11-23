@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const VendaSchema = new mongoose.Schema({
-  numero: { type: String }, 
+  numero: { type: String },
   data: { type: Date, default: Date.now },
   vendedor: { type: String, required: true },
-  
+
   cliente: {
     id: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente' },
     nome: String,
@@ -22,7 +22,7 @@ const VendaSchema = new mongoose.Schema({
   valorTotal: { type: Number, required: true },
   formaPagamento: { type: String, default: 'Dinheiro' },
   observacoes: String,
-  
+
   lojaId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Loja',
@@ -31,4 +31,4 @@ const VendaSchema = new mongoose.Schema({
 });
 
 const Venda = mongoose.model('Venda', VendaSchema);
-module.exports = Venda;
+export default Venda;

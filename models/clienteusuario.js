@@ -1,15 +1,15 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ClienteUsuarioSchema = new mongoose.Schema({
   nome: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   senha: { type: String, required: true },
-  
-  cpf: { 
-    type: String, 
-    unique: true, 
-    sparse: true, 
-    default: undefined 
+
+  cpf: {
+    type: String,
+    unique: true,
+    sparse: true,
+    default: undefined
   },
 
   telefone: String,
@@ -23,4 +23,4 @@ const ClienteUsuarioSchema = new mongoose.Schema({
   dataCadastro: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('ClienteUsuario', ClienteUsuarioSchema);
+export default mongoose.model('ClienteUsuario', ClienteUsuarioSchema);

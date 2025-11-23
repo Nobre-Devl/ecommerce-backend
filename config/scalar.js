@@ -667,4 +667,4 @@ const openApiSpec = {
   },
 };
 
-module.exports = openApiSpec;
+export default openApiSpec;

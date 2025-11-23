@@ -1,10 +1,11 @@
-const express = require('express');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import Loja from '../models/loja.js';
+import cloudinary from '../config/cloudinary.js';
+import verificarAuth from '../middleware/auth.js';
+
 const router = express.Router();
-const Loja = require('../models/loja');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const cloudinary = require('../config/cloudinary'); 
-const verificarAuth = require('../middleware/auth'); // 👈 CORREÇÃO: Importa o Middleware
 
 router.get('/perfil', verificarAuth, async (req, res) => {
     try {
@@ -22,22 +23,22 @@ router.get('/perfil', verificarAuth, async (req, res) => {
 
 router.post('/register', async (req, res) => {
     try {
-        const { 
-            nome, 
-            email, 
-            password, 
-            cnpj, 
-            telefone, 
-            imagem, 
-            endereco 
+        const {
+            nome,
+            email,
+            password,
+            cnpj,
+            telefone,
+            imagem,
+            endereco
         } = req.body;
 
-        let imageUrl = ''; 
+        let imageUrl = '';
 
         if (imagem) {
             const uploadResponse = await cloudinary.uploader.upload(imagem, {
                 folder: "lojas_logos",
-                resource_type: "image" 
+                resource_type: "image"
             });
             imageUrl = uploadResponse.secure_url;
         }
@@ -51,7 +52,7 @@ router.post('/register', async (req, res) => {
             password: hashedPassword,
             cnpj,
             telefone,
-            imagem: imageUrl, 
+            imagem: imageUrl,
             endereco
         });
 
@@ -73,7 +74,7 @@ router.post('/login', async (req, res) => {
         if (!validPassword) return res.status(400).send('Email ou senha inválidos.');
 
         // 🚨 Aviso: 'SEGREDO_SUPER_SECRETO' deve ser substituído pela variável de ambiente
-        const token = jwt.sign({ _id: loja._id }, 'SEGREDO_SUPER_SECRETO'); 
+        const token = jwt.sign({ _id: loja._id }, 'SEGREDO_SUPER_SECRETO');
         res.header('auth-token', token).send({ token: token });
 
     } catch (err) {
@@ -81,4 +82,4 @@ router.post('/login', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

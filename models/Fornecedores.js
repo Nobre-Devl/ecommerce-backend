@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const FornecedoresSchema = new mongoose.Schema({
     RazaoSocial: { type: String, required: true },
@@ -19,4 +19,4 @@ const FornecedoresSchema = new mongoose.Schema({
 
 const Fornecedores = mongoose.model('Fornecedores', FornecedoresSchema);
 
-module.exports = Fornecedores;
+export default Fornecedores;

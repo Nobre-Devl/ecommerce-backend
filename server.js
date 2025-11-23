@@ -1,16 +1,18 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+import 'dotenv/config';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import { apiReference } from '@scalar/express-api-reference';
 
-const produtoRoutes = require('./routes/produtos');
-const authRoutes = require('./routes/auth');
-const clientesRoutes = require('./routes/clientes');
-const fornecedoresRoutes = require('./routes/fornecedores');
-const publicRoutes = require('./routes/public');
-const clienteAuthRoutes = require('./routes/clienteauth');
-const dashboardRoutes = require('./routes/dashboard');
-const vendasRoutes = require('./routes/vendas');
+import produtoRoutes from './routes/produtos.js';
+import authRoutes from './routes/auth.js';
+import clientesRoutes from './routes/clientes.js';
+import fornecedoresRoutes from './routes/fornecedores.js';
+import publicRoutes from './routes/public.js';
+import clienteAuthRoutes from './routes/clienteauth.js';
+import dashboardRoutes from './routes/dashboard.js';
+import vendasRoutes from './routes/vendas.js';
+import openApiSpec from './config/scalar.js';
 
 const app = express();
 const PORT = process.env.PORT || 2024;
@@ -24,7 +26,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 mongoose
-  .connect('mongodb+srv://admin:senhaadmin@cluster0.5tidptg.mongodb.net/ecommerce')
+  .connect(process.env.MONGO_URI || 'mongodb+srv://admin:senhaadmin@cluster0.5tidptg.mongodb.net/ecommerce')
   .then(() => console.log('✅ MongoDB Conectado!'))
   .catch(err => console.error('❌ Erro no Mongo:', err));
 
@@ -41,9 +43,6 @@ app.get('/', (req, res) => {
   res.send('API E-Com+ Rodando! 🚀');
 });
 
-const { apiReference } = require('@scalar/express-api-reference');
-const openApiSpec = require('./config/scalar');
-
 app.use(
   '/docs',
   apiReference({
@@ -55,4 +54,4 @@ app.use(
 
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
 
-module.exports = app;
+export default app;

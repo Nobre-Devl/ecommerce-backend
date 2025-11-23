@@ -1,12 +1,13 @@
-const express = require('express');
+import express from 'express';
+import Produto from '../models/produto.js';
+
 const router = express.Router();
-const Produto = require('../models/produto'); 
 
 router.get('/produtos', async (req, res) => {
     try {
         const produtos = await Produto.find()
-            .populate('lojaId', 'nome nomeFantasia email'); 
-            
+            .populate('lojaId', 'nome nomeFantasia email');
+
         res.json(produtos);
     } catch (err) {
         console.error(err);
@@ -14,4 +15,4 @@ router.get('/produtos', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

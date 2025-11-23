@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import Fornecedor from '../models/Fornecedores.js';
+import verificarAuth from '../middleware/auth.js';
+
 const router = express.Router();
-const Fornecedor = require('../models/Fornecedores');
-const verificarAuth = require('../middleware/auth');
 
 router.get('/', verificarAuth, async (req, res) => {
   try {
@@ -42,9 +43,9 @@ router.put('/:id', verificarAuth, async (req, res) => {
 
 router.delete('/:id', verificarAuth, async (req, res) => {
   try {
-    const deletedFornecedor = await Fornecedor.findOneAndDelete({ 
-      _id: req.params.id, 
-      lojaId: req.loja._id 
+    const deletedFornecedor = await Fornecedor.findOneAndDelete({
+      _id: req.params.id,
+      lojaId: req.loja._id
     });
     if (!deletedFornecedor) return res.status(404).json({ message: 'Fornecedor não encontrado' });
     res.json({ message: 'Fornecedor removido' });
@@ -53,4 +54,4 @@ router.delete('/:id', verificarAuth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

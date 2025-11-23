@@ -1,13 +1,14 @@
-const express = require('express');
+import express from 'express';
+import Cliente from '../models/cliente.js';
+import verificarAuth from '../middleware/auth.js';
+
 const router = express.Router();
-const Cliente = require('../models/cliente');
-const verificarAuth = require('../middleware/auth');
 
 router.post('/', verificarAuth, async (req, res) => {
     try {
         const novoCliente = new Cliente({
             ...req.body,
-            lojaId: req.loja._id 
+            lojaId: req.loja._id
         });
         const savedCliente = await novoCliente.save();
         res.status(201).json(savedCliente);
@@ -18,7 +19,7 @@ router.post('/', verificarAuth, async (req, res) => {
 
 router.get('/', verificarAuth, async (req, res) => {
     try {
-      const clientes = await Cliente.find({ lojaId: req.loja._id });
+        const clientes = await Cliente.find({ lojaId: req.loja._id });
         res.json(clientes);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -28,11 +29,11 @@ router.get('/', verificarAuth, async (req, res) => {
 router.put('/:id', verificarAuth, async (req, res) => {
     try {
         const updatedCliente = await Cliente.findOneAndUpdate(
-            { _id: req.params.id, lojaId: req.loja._id }, 
+            { _id: req.params.id, lojaId: req.loja._id },
             req.body,
             { new: true }
         );
-        
+
         if (!updatedCliente) return res.status(404).send('Cliente não encontrado.');
         res.json(updatedCliente);
     } catch (err) {
@@ -43,9 +44,9 @@ router.put('/:id', verificarAuth, async (req, res) => {
 router.delete('/:id', verificarAuth, async (req, res) => {
     try {
         const deleted = await Cliente.findOneAndDelete(
-            { _id: req.params.id, lojaId: req.loja._id } 
+            { _id: req.params.id, lojaId: req.loja._id }
         );
-        
+
         if (!deleted) return res.status(404).send('Cliente não encontrado.');
         res.json({ message: 'Cliente removido!' });
     } catch (err) {
@@ -53,4 +54,4 @@ router.delete('/:id', verificarAuth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

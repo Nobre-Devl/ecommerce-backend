@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import ClienteUsuario from '../models/clienteusuario.js';
+
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const ClienteUsuario = require('../models/clienteusuario'); 
 
 router.post('/registro', async (req, res) => {
   try {
@@ -29,7 +30,7 @@ router.post('/registro', async (req, res) => {
       nome,
       email,
       senha: hashedPassword,
-      cpf, 
+      cpf,
       telefone
     });
 
@@ -52,7 +53,7 @@ router.post('/registro', async (req, res) => {
 
   } catch (err) {
     console.error("Erro no Registro:", err);
-    
+
     if (err.code === 11000) {
       const campo = Object.keys(err.keyPattern)[0];
       return res.status(400).json({ message: `Erro: ${campo.toUpperCase()} já está em uso.` });
@@ -92,4 +93,4 @@ router.post('/login', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const lojaSchema = new mongoose.Schema({
   nome: {
@@ -8,7 +8,7 @@ const lojaSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true 
+    unique: true
   },
   password: {
     type: String,
@@ -25,13 +25,13 @@ const lojaSchema = new mongoose.Schema({
   cnpj: {
     type: String,
     required: true,
-    unique: true 
+    unique: true
   },
   telefone: {
     type: String
   },
   imagem: {
-    type: String, 
+    type: String,
   },
   endereco: {
     cep: String,
@@ -46,4 +46,4 @@ const lojaSchema = new mongoose.Schema({
 
 const Loja = mongoose.models.Loja || mongoose.model('Loja', lojaSchema);
 
-module.exports = Loja;
+export default Loja;

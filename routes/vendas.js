@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import Venda from '../models/Venda.js';
+import Produto from '../models/produto.js';
+import verificarAuth from '../middleware/auth.js';
+
 const router = express.Router();
-const Venda = require('../models/Venda');
-const Produto = require('../models/produto'); 
-const verificarAuth = require('../middleware/auth');
 
 router.get('/', verificarAuth, async (req, res) => {
   try {
@@ -34,7 +35,7 @@ router.post('/', verificarAuth, async (req, res) => {
     const novaVenda = new Venda({
       ...req.body,
       lojaId: req.loja._id,
-      numero: Date.now().toString() 
+      numero: Date.now().toString()
     });
     const savedVenda = await novaVenda.save();
     res.status(201).json(savedVenda);
@@ -52,7 +53,7 @@ router.delete('/:id', verificarAuth, async (req, res) => {
     for (const item of venda.itens) {
       await Produto.findOneAndUpdate(
         { _id: item.produtoId, lojaId: req.loja._id },
-        { $inc: { estoque: +item.quantidade } } 
+        { $inc: { estoque: +item.quantidade } }
       );
     }
 
@@ -81,13 +82,13 @@ router.put('/:id', verificarAuth, async (req, res) => {
 
     for (const item of novosItens) {
       const prod = await Produto.findOne({ _id: item.produtoId, lojaId: req.loja._id });
-      
+
       if (!prod || prod.estoque < item.quantidade) {
-        
+
         for (const itemAntigo of vendaAntiga.itens) {
-           await Produto.findOneAndUpdate({ _id: itemAntigo.produtoId }, { $inc: { estoque: -itemAntigo.quantidade } });
+          await Produto.findOneAndUpdate({ _id: itemAntigo.produtoId }, { $inc: { estoque: -itemAntigo.quantidade } });
         }
-        
+
         return res.status(400).json({ message: `Estoque insuficiente para a alteração: ${item.nome}` });
       }
     }
@@ -101,7 +102,7 @@ router.put('/:id', verificarAuth, async (req, res) => {
 
     const vendaAtualizada = await Venda.findOneAndUpdate(
       { _id: req.params.id },
-      { 
+      {
         $set: {
           cliente: req.body.cliente,
           itens: novosItens,
@@ -119,4 +120,4 @@ router.put('/:id', verificarAuth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

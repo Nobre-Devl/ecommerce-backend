@@ -1,10 +1,11 @@
-const express = require('express');
+import express from 'express';
+import mongoose from 'mongoose';
+import Venda from '../models/Venda.js';
+import Produto from '../models/produto.js';
+import Cliente from '../models/cliente.js';
+import verificarAuth from '../middleware/auth.js';
+
 const router = express.Router();
-const mongoose = require('mongoose'); 
-const Venda = require('../models/Venda');
-const Produto = require('../models/produto'); 
-const Cliente = require('../models/cliente'); 
-const verificarAuth = require('../middleware/auth');
 
 router.get('/resumo', verificarAuth, async (req, res) => {
   try {
@@ -14,7 +15,7 @@ router.get('/resumo', verificarAuth, async (req, res) => {
     console.log("Calculando dashboard para Loja ID:", lojaObjectId);
 
     const [resultadoFaturamento, qtdVendas, qtdProdutos, qtdClientes, ultimasVendas] = await Promise.all([
-      
+
       // 1. Soma EXATA dos valores (Aggregation)
       Venda.aggregate([
         { $match: { lojaId: lojaObjectId } },
@@ -52,4 +53,4 @@ router.get('/resumo', verificarAuth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

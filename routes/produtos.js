@@ -1,14 +1,15 @@
-const express = require('express');
+import express from 'express';
+import Produto from '../models/produto.js';
+import verificarAuth from '../middleware/auth.js';
+import cloudinary from '../config/cloudinary.js';
+
 const router = express.Router();
-const Produto = require('../models/produto');
-const verificarAuth = require('../middleware/auth');
-const cloudinary = require('../config/cloudinary');
 
 router.post('/', verificarAuth, async (req, res) => {
   try {
     const lojaIdDona = req.loja._id;
-    const { imagem, ...outrosDados } = req.body; 
-    
+    const { imagem, ...outrosDados } = req.body;
+
     let imageUrl = '';
 
     if (imagem) {
@@ -20,7 +21,7 @@ router.post('/', verificarAuth, async (req, res) => {
 
     const novoProduto = new Produto({
       ...outrosDados,
-      imagem: imageUrl, 
+      imagem: imageUrl,
       lojaId: lojaIdDona
     });
 
@@ -44,22 +45,22 @@ router.get('/', verificarAuth, async (req, res) => {
 router.put('/:id', verificarAuth, async (req, res) => {
   try {
     const lojaIdDona = req.loja._id;
-    const dadosAtualizados = req.body; 
+    const dadosAtualizados = req.body;
 
     if (dadosAtualizados.imagem && dadosAtualizados.imagem.startsWith('data:image')) {
       const uploadResponse = await cloudinary.uploader.upload(dadosAtualizados.imagem, {
         folder: "produtos_imagens"
       });
       dadosAtualizados.imagem = uploadResponse.secure_url;
-    
-    } 
+
+    }
 
     const updatedProduto = await Produto.findOneAndUpdate(
-      { _id: req.params.id, lojaId: lojaIdDona }, 
-      dadosAtualizados, 
+      { _id: req.params.id, lojaId: lojaIdDona },
+      dadosAtualizados,
       { new: true }
     );
-    
+
     if (!updatedProduto) return res.status(404).send('Produto não encontrado ou não pertence a esta loja.');
 
     res.json(updatedProduto);
@@ -83,4 +84,4 @@ router.delete('/:id', verificarAuth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
