@@ -25,12 +25,12 @@ const swaggerDocument = {
   },
   servers: [
     {
-      url: `http://localhost:${PORT}`,
-      description: 'Servidor Local'
+      url: 'https://ecommerce-backend-green-iota.vercel.app', 
+      description: 'Produção (Vercel)'
     },
     {
-      url: 'https://ecommerce-backend-green-iota.vercel.app/', 
-      description: 'Produção (Vercel)'
+      url: `http://localhost:${PORT}`,
+      description: 'Servidor Local'
     }
   ]
 };
@@ -43,16 +43,29 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-mongoose
-  .connect('mongodb+srv://admin:senhaadmin@cluster0.5tidptg.mongodb.net/ecommerce') 
-  .then(() => console.log('✅ MongoDB Conectado!'))
-  .catch(err => console.error('❌ Erro no Mongo:', err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect('mongodb+srv://admin:senhaadmin@cluster0.5tidptg.mongodb.net/ecommerce', {
+      serverSelectionTimeoutMS: 5000, 
+      socketTimeoutMS: 45000,
+      family: 4 
+    });
+    console.log('✅ MongoDB Conectado!');
+  } catch (err) {
+    console.error('❌ Erro no Mongo:', err);
+  }
+};
 
-const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+connectDB(); 
+const swaggerOptions = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-bundle.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-standalone-preset.min.js'
+  ]
+};
 
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
-  customCssUrl: CSS_URL
-}));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
 
 app.use('/produtos', produtoRoutes);      
 app.use('/api/loja', authRoutes);         
