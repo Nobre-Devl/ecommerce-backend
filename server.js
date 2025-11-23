@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express'); 
 
 const produtoRoutes = require('./routes/produtos');
 const authRoutes = require('./routes/auth'); 
@@ -14,6 +15,25 @@ const vendasRoutes = require('./routes/vendas');
 
 const app = express();
 const PORT = process.env.PORT || 2024;
+
+const swaggerDocument = {
+  openapi: '3.0.0',
+  info: {
+    title: 'API E-Com+',
+    version: '1.0.0',
+    description: 'Documentação da API do projeto de E-commerce'
+  },
+  servers: [
+    {
+      url: `http://localhost:${PORT}`,
+      description: 'Servidor Local'
+    },
+    {
+      url: 'https://ecommerce-backend-green-iota.vercel.app', 
+      description: 'Produção (Vercel)'
+    }
+  ]
+};
 
 app.use(cors({
     origin: '*', 
@@ -28,6 +48,8 @@ mongoose
   .then(() => console.log('✅ MongoDB Conectado!'))
   .catch(err => console.error('❌ Erro no Mongo:', err));
 
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use('/produtos', produtoRoutes);      
 app.use('/api/loja', authRoutes);         
 app.use('/clientes', clientesRoutes);    
@@ -38,7 +60,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/vendas', vendasRoutes);
 
 app.get('/', (req, res) => {
-    res.send('API E-Com+ Rodando! 🚀');
+    res.send('API E-Com+ Rodando! 🚀 Acesse /docs para ver a documentação.');
 });
 
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
