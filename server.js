@@ -13,17 +13,10 @@ import clienteAuthRoutes from './routes/clienteauth.js';
 import dashboardRoutes from './routes/dashboard.js';
 import vendasRoutes from './routes/vendas.js';
 
+import openApiSpec from './config/scalar.js';
+
 const app = express();
 const PORT = process.env.PORT || 2024;
-
-const swaggerDocument = {
-  openapi: '3.0.0',
-  info: { title: 'API E-Com+', version: '1.0.0' },
-  servers: [
-    { url: 'https://ecommerce-backend-green-iota.vercel.app', description: 'Vercel' },
-    { url: `http://localhost:${PORT}`, description: 'Local' }
-  ]
-};
 
 const swaggerOptions = {
   customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css',
@@ -32,6 +25,12 @@ const swaggerOptions = {
     'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-standalone-preset.min.js'
   ]
 };
+
+// Atualiza as URLs dos servidores dinamicamente
+openApiSpec.servers = [
+  { url: 'https://ecommerce-backend-green-iota.vercel.app', description: 'Vercel' },
+  { url: `http://localhost:${PORT}`, description: 'Local' }
+];
 
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '50mb' }));
@@ -77,7 +76,7 @@ app.get('/status', async (req, res) => {
   }
 });
 
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec, swaggerOptions));
 app.use('/produtos', produtoRoutes);
 app.use('/api/loja', authRoutes);
 app.use('/clientes', clientesRoutes);
