@@ -1,17 +1,17 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const swaggerUi = require('swagger-ui-express');
+import 'dotenv/config';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
 
-const produtoRoutes = require('./routes/produtos');
-const authRoutes = require('./routes/auth'); 
-const clientesRoutes = require('./routes/clientes'); 
-const fornecedoresRoutes = require('./routes/fornecedores');
-const publicRoutes = require('./routes/public'); 
-const clienteAuthRoutes = require('./routes/clienteauth'); 
-const dashboardRoutes = require('./routes/dashboard');
-const vendasRoutes = require('./routes/vendas');
+import produtoRoutes from './routes/produtos.js';
+import authRoutes from './routes/auth.js';
+import clientesRoutes from './routes/clientes.js';
+import fornecedoresRoutes from './routes/fornecedores.js';
+import publicRoutes from './routes/public.js';
+import clienteAuthRoutes from './routes/clienteauth.js';
+import dashboardRoutes from './routes/dashboard.js';
+import vendasRoutes from './routes/vendas.js';
 
 const app = express();
 const PORT = process.env.PORT || 2024;
@@ -52,25 +52,25 @@ connectDB();
 app.get('/status', async (req, res) => {
   const state = mongoose.connection.readyState;
   const states = { 0: 'Desconectado', 1: 'Conectado', 2: 'Conectando', 3: 'Desconectando' };
-  
+
   try {
-    if(state === 1) {
-       await mongoose.connection.db.admin().ping();
-       return res.json({ 
-         status: 'OK', 
-         mongoState: states[state], 
-         message: 'Banco respondendo corretamente.' 
-       });
+    if (state === 1) {
+      await mongoose.connection.db.admin().ping();
+      return res.json({
+        status: 'OK',
+        mongoState: states[state],
+        message: 'Banco respondendo corretamente.'
+      });
     } else {
-       return res.status(500).json({ 
-         status: 'ERRO', 
-         mongoState: states[state], 
-         message: 'Mongoose não está conectado.' 
-       });
+      return res.status(500).json({
+        status: 'ERRO',
+        mongoState: states[state],
+        message: 'Mongoose não está conectado.'
+      });
     }
   } catch (error) {
-    return res.status(500).json({ 
-      status: 'ERRO CRÍTICO', 
+    return res.status(500).json({
+      status: 'ERRO CRÍTICO',
       error: error.message,
       detail: error
     });
@@ -78,17 +78,17 @@ app.get('/status', async (req, res) => {
 });
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
-app.use('/produtos', produtoRoutes);      
-app.use('/api/loja', authRoutes);         
-app.use('/clientes', clientesRoutes);    
+app.use('/produtos', produtoRoutes);
+app.use('/api/loja', authRoutes);
+app.use('/clientes', clientesRoutes);
 app.use('/fornecedores', fornecedoresRoutes);
-app.use('/public', publicRoutes);        
+app.use('/public', publicRoutes);
 app.use('/api/cliente', clienteAuthRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/vendas', vendasRoutes);
 
 app.get('/', (req, res) => {
-    res.send('API Rodando. Acesse /status para testar o banco ou /docs para documentação.');
+  res.send('API Rodando. Acesse /status para testar o banco ou /docs para documentação.');
 });
 
 app.listen(PORT, () => console.log(`Rodando na porta ${PORT}`));
