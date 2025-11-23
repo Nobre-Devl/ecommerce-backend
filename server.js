@@ -29,7 +29,7 @@ const swaggerDocument = {
       description: 'Servidor Local'
     },
     {
-      url: 'https://ecommerce-backend-alpha.vercel.app', 
+      url: 'https://ecommerce-backend-green-iota.vercel.app/', 
       description: 'Produção (Vercel)'
     }
   ]
