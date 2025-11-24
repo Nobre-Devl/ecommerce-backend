@@ -66,18 +66,35 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        const loja = await Loja.findOne({ email: req.body.email });
-        if (!loja) return res.status(400).send({ message: 'Email ou senha inválidos.' });
+        console.log("1. Tentativa de Login:", req.body); 
+
+        const loja = await Loja.findOne({ email: req.body.email }).select('+password');
+
+        if (!loja) {
+            console.log("2. Email não encontrado no banco.");
+            return res.status(400).send({ message: 'Email ou senha inválidos.' });
+        }
+
+        console.log("3. Loja encontrada. Hash da senha:", loja.password);
+
+        if (!loja.password) {
+            console.log("ERRO: Usuário existe mas não tem senha salva!");
+            return res.status(500).json({ message: 'Erro no cadastro deste usuário. Contate o suporte.' });
+        }
 
         const validPassword = await bcrypt.compare(req.body.password, loja.password);
-        if (!validPassword) return res.status(400).send({ message: 'Email ou senha inválidos.' });
+        
+        if (!validPassword) {
+            console.log("4. Senha incorreta.");
+            return res.status(400).send({ message: 'Email ou senha inválidos.' });
+        }
 
         const token = jwt.sign({ _id: loja._id }, 'SEGREDO_SUPER_SECRETO'); 
         res.header('auth-token', token).send({ token: token });
 
     } catch (err) {
+        console.error("ERRO NO LOGIN:", err);
         res.status(500).json({ message: err.message });
     }
 });
-
 module.exports = router;
