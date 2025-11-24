@@ -664,6 +664,171 @@ const openApiSpec = {
         },
       },
     },
+    '/produtos/bulk': {
+      post: {
+        summary: 'Cadastro em massa de produtos',
+        description: 'Cadastra múltiplos produtos de uma vez.',
+        tags: ['Produtos'],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    nome: { type: 'string' },
+                    descricao: { type: 'string' },
+                    preco: { type: 'number' },
+                    estoque: { type: 'number' },
+                    imagem: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          201: {
+            description: 'Produtos cadastrados com sucesso',
+          },
+          500: {
+            description: 'Erro ao cadastrar produtos',
+          },
+        },
+      },
+    },
+    '/despesas': {
+      get: {
+        summary: 'Listar despesas',
+        description: 'Retorna todas as despesas cadastradas.',
+        tags: ['Despesas'],
+        responses: {
+          200: {
+            description: 'Lista de despesas',
+          },
+        },
+      },
+      post: {
+        summary: 'Registrar despesa',
+        description: 'Cria uma nova despesa.',
+        tags: ['Despesas'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  descricao: { type: 'string', example: 'Conta de Luz' },
+                  valor: { type: 'number', example: 150.00 },
+                  dataVencimento: { type: 'string', format: 'date', example: '2024-12-10' },
+                  status: { type: 'string', enum: ['Pendente', 'Pago'], example: 'Pendente' },
+                  categoria: { type: 'string', example: 'Utilidades' },
+                },
+                required: ['descricao', 'valor', 'dataVencimento'],
+              },
+            },
+          },
+        },
+        responses: {
+          201: {
+            description: 'Despesa registrada com sucesso',
+          },
+          400: {
+            description: 'Erro ao registrar despesa',
+          },
+        },
+      },
+    },
+    '/despesas/resumo': {
+      get: {
+        summary: 'Resumo de despesas',
+        description: 'Retorna o total de despesas pendentes e a quantidade.',
+        tags: ['Despesas'],
+        responses: {
+          200: {
+            description: 'Resumo das despesas',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    totalPendente: { type: 'number' },
+                    quantidade: { type: 'number' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/despesas/{id}': {
+      put: {
+        summary: 'Atualizar despesa',
+        description: 'Atualiza os dados de uma despesa existente.',
+        tags: ['Despesas'],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+            description: 'ID da despesa',
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  descricao: { type: 'string' },
+                  valor: { type: 'number' },
+                  dataVencimento: { type: 'string', format: 'date' },
+                  status: { type: 'string', enum: ['Pendente', 'Pago'] },
+                  categoria: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: 'Despesa atualizada com sucesso',
+          },
+          500: {
+            description: 'Erro ao atualizar despesa',
+          },
+        },
+      },
+      delete: {
+        summary: 'Remover despesa',
+        description: 'Remove uma despesa do sistema.',
+        tags: ['Despesas'],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+            description: 'ID da despesa',
+          },
+        ],
+        responses: {
+          200: {
+            description: 'Despesa removida com sucesso',
+          },
+          500: {
+            description: 'Erro ao remover despesa',
+          },
+        },
+      },
+    },
   },
 };
 
