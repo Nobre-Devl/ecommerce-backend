@@ -68,21 +68,26 @@ router.post('/login', async (req, res) => {
     try {
         console.log("1. Tentativa de Login:", req.body); 
 
+        const senhaRecebida = req.body.password || req.body.senha;
+
+        if (!senhaRecebida) {
+            console.log("2. Nenhuma senha foi enviada no corpo da requisição.");
+            return res.status(400).send({ message: 'Senha é obrigatória.' });
+        }
+
         const loja = await Loja.findOne({ email: req.body.email }).select('+password');
 
         if (!loja) {
-            console.log("2. Email não encontrado no banco.");
+            console.log("3. Email não encontrado.");
             return res.status(400).send({ message: 'Email ou senha inválidos.' });
         }
 
-        console.log("3. Loja encontrada. Hash da senha:", loja.password);
-
         if (!loja.password) {
-            console.log("ERRO: Usuário existe mas não tem senha salva!");
-            return res.status(500).json({ message: 'Erro no cadastro deste usuário. Contate o suporte.' });
+            console.log("ERRO CRÍTICO: Usuário sem senha no banco.");
+            return res.status(500).json({ message: 'Erro no cadastro. Tente redefinir a senha.' });
         }
 
-        const validPassword = await bcrypt.compare(req.body.password, loja.password);
+        const validPassword = await bcrypt.compare(senhaRecebida, loja.password);
         
         if (!validPassword) {
             console.log("4. Senha incorreta.");
