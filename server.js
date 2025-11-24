@@ -12,6 +12,7 @@ const publicRoutes = require('./routes/public');
 const clienteAuthRoutes = require('./routes/clienteauth'); 
 const dashboardRoutes = require('./routes/dashboard');
 const vendasRoutes = require('./routes/vendas');
+const despesasRoutes = require('./routes/despesas');
 
 const app = express();
 const PORT = process.env.PORT || 2024;
@@ -45,7 +46,7 @@ const connectDBMiddleware = async (req, res, next) => {
     }
     
     await mongoose.connect(MONGO_URI, {
-      family: 4, // Força IPv4
+      family: 4, 
       serverSelectionTimeoutMS: 5000 
     });
     console.log('✅ Nova conexão MongoDB estabelecida');
@@ -83,6 +84,7 @@ app.use('/public', publicRoutes);
 app.use('/api/cliente', clienteAuthRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/vendas', vendasRoutes);
+app.use('/despesas', despesasRoutes);
 
 app.get('/', (req, res) => {
     res.send('API Rodando. Acesse /status para testar o banco ou /docs para documentação.');
